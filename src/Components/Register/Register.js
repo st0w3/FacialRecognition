@@ -26,7 +26,9 @@ class Register extends React.Component {
     }
 
     onSubmitRegistration = () => {
-        fetch('http://localhost:3000/register', {
+        const {ip} = this.props;
+        console.log(ip);
+        fetch(ip + '/register', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -37,8 +39,9 @@ class Register extends React.Component {
         })
         .then(response => response.json())
         .then(user => {
-            if (user[0].id){
-                this.props.loadUser(user[0]);
+            console.log('important', user);
+            if (user.id){
+                this.props.loadUser(user);
                 this.props.onRouteChange('home');
             }
         });
@@ -70,7 +73,7 @@ class Register extends React.Component {
                     </div>
                 </main>
             </article>
-    );
+        );
     }
 }
 

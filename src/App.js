@@ -8,41 +8,21 @@ import ParticlesBg from 'particles-bg'
 import { Component } from 'react';
 import SignIn from './Components/SignIn/SignIn';
 import Register from './Components/Register/Register';
-
-const returnClarifaiJSONRequest = (imageURL) => {
-  const PAT = 'b8ff20a063114b7faef50ce138ccaf19';
-  const USER_ID = 'st0w3';       
-  const APP_ID = 'FacialRecognition';
-  const IMAGE_URL = imageURL;
-
-  const raw = JSON.stringify({
-      "user_app_id": {
-          "user_id": USER_ID,
-          "app_id": APP_ID
-      },
-      "inputs": [
-          {
-              "data": {
-                  "image": {
-                      "url": IMAGE_URL
-                  }
-              }
-          }
-      ]
-});
-
-console.log(raw);
-
-  return {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Key ' + PAT
-    },
-    body: raw
-};
+const initialState = {
+  input: '',
+  imageURL: '',
+  box: {}, 
+  route: 'signin',
+  isSignedIn: false,
+  ip: 'http://stowecode.com',
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
 }
-
 class App extends Component {
   constructor()
   {
@@ -53,6 +33,7 @@ class App extends Component {
       box: {}, 
       route: 'signin',
       isSignedIn: false,
+      ip: 'http://stowecode.com',
       user: {
         id: '',
         name: '',
@@ -75,6 +56,7 @@ class App extends Component {
 
   calculateFaceLocation = (data) =>
   {
+    console.log('the data', data);
     const boundingBox = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById('inputImage');
     const width = image.width;
@@ -100,22 +82,29 @@ class App extends Component {
 
   onSubmit = () => {
     this.setState({imageURL: this.state.input});
-    fetch('https://api.clarifai.com/v2/models/' + 'face-detection' + '/outputs', returnClarifaiJSONRequest(this.state.input))
+    fetch (this.state.ip +'/facedetection', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            imageURL: this.state.input
+          })
+    })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
+      console.log('client response', response);
       if (response) {
-        fetch ('http://localhost:3000/entries', {
+        fetch (this.state.ip + '/entries', {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
             id: this.state.user.id
           })
         })
+        .catch(console.log)
         .then (response => response.json())
         .then (count => {
           this.setState(Object.assign(this.state.user, {entries:count}));
-          })
+        })
       }
       this.displayFaceBox(this.calculateFaceLocation(response))
     })
@@ -124,7 +113,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout'){
-      this.setState({isSignedIn: false});
+      this.setState(initialState);
     }
     else if (route === 'home'){
       this.setState({isSignedIn: true});
@@ -146,8 +135,8 @@ class App extends Component {
               <FaceRecognition box={box} imageURL={imageURL}/>
           </div>
           : (route === 'signin')
-          ? <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
-          : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
+          ? <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} ip={this.state.ip} />
+          : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} ip={this.state.ip} />
         }
       </div>
     );

@@ -17,8 +17,10 @@ class SignIn extends React.Component {
         this.setState({signInPassword: event.target.value});
     }
 
-    onSubmitSignIn = () =>{
-        fetch('http://localhost:3000/signin', {
+    onSubmitSignIn = () => {
+        const {ip} = this.props;
+        console.log(ip);
+        fetch(ip + '/signin', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -30,12 +32,13 @@ class SignIn extends React.Component {
         .then(user => {
             if (user[0].id)
             {
+                console.log(user[0].id);
                 this.props.loadUser(user[0]);
                 this.props.onRouteChange('home');
             }
         })
         .catch(err => {
-            
+
         });
     }
 
