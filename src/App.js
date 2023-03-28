@@ -14,7 +14,7 @@ const initialState = {
   box: {}, 
   route: 'signin',
   isSignedIn: false,
-  ip: 'http://stowecode.com',
+  ip: 'http://internal-stowe-code-internal-lb-587324076.us-east-1.elb.amazonaws.com',
   user: {
     id: '',
     name: '',
@@ -33,7 +33,7 @@ class App extends Component {
       box: {}, 
       route: 'signin',
       isSignedIn: false,
-      ip: 'http://stowecode.com',
+      ip: 'http://internal-stowe-code-internal-lb-587324076.us-east-1.elb.amazonaws.com',
       user: {
         id: '',
         name: '',
