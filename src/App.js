@@ -8,13 +8,14 @@ import ParticlesBg from 'particles-bg'
 import { Component } from 'react';
 import SignIn from './Components/SignIn/SignIn';
 import Register from './Components/Register/Register';
+
 const initialState = {
   input: '',
   imageURL: '',
   box: {}, 
   route: 'signin',
   isSignedIn: false,
-  ip: 'https://internal-stowe-code-server-lb-704556116.us-east-1.elb.amazonaws.com',
+  ip: 'https://api.stowecode.com',
   user: {
     id: '',
     name: '',
@@ -33,7 +34,7 @@ class App extends Component {
       box: {}, 
       route: 'signin',
       isSignedIn: false,
-      ip: 'internal-stowe-code-server-lb-704556116.us-east-1.elb.amazonaws.com',
+      ip: 'https://api.stowecode.com',
       user: {
         id: '',
         name: '',
@@ -56,7 +57,6 @@ class App extends Component {
 
   calculateFaceLocation = (data) =>
   {
-    console.log('the data', data);
     const boundingBox = data.outputs[0].data.regions[0].region_info.bounding_box;
     const image = document.getElementById('inputImage');
     const width = image.width;
