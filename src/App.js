@@ -15,7 +15,7 @@ const initialState = {
   box: {}, 
   route: 'signin',
   isSignedIn: false,
-  ip: 'api.stowe.com',
+  ip: 'https://api.stowe.com',
   user: {
     id: '',
     name: '',
@@ -34,7 +34,7 @@ class App extends Component {
       box: {}, 
       route: 'signin',
       isSignedIn: false,
-      ip: 'api.stowe.com',
+      ip: 'https://api.stowe.com',
       user: {
         id: '',
         name: '',
