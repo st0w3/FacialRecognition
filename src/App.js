@@ -12,10 +12,10 @@ import Register from './Components/Register/Register';
 const initialState = {
   input: '',
   imageURL: '',
-  box: {}, 
+  boxes: [], 
   route: 'signin',
   isSignedIn: false,
-  ip: '//api.stowecode.com',
+  ip: '//localhost:8000',
   user: {
     id: '',
     name: '',
@@ -31,10 +31,10 @@ class App extends Component {
     this.state = {
       input: '',
       imageURL: '',
-      box: {}, 
+      boxes: [], 
       route: 'signin',
       isSignedIn: false,
-      ip: '//api.stowecode.com',
+      ip: '//localhost:8000',
       user: {
         id: '',
         name: '',
@@ -55,24 +55,27 @@ class App extends Component {
     }})
   }
 
-  calculateFaceLocation = (data) =>
+  calculateFaceLocations = (data) =>
   {
-    const boundingBox = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputImage');
-    const width = image.width;
-    const height = image.height;
+    return data.outputs[0].data.regions.map(face => {
+      const clarifaiFace = face.region_info.bounding_box;
+      const image = document.getElementById('inputImage');
+      const width = image.width;
+      const height = image.height;
 
-    return {
-      left: boundingBox.left_col * width,
-      top: boundingBox.top_row * height,
-      right: width - (boundingBox.right_col * width),
-      bottom: height - (boundingBox.bottom_row * height)
-    }
+      return {
+        left: clarifaiFace.left_col * width,
+        top: clarifaiFace.top_row * height,
+        right: width - (clarifaiFace.right_col * width),
+        bottom: height - (clarifaiFace.bottom_row * height)
+      }
+    });
+    
   }
 
-  displayFaceBox(box){
-    console.log(box);
-    this.setState({box});
+  displayFaceBoxes(boxes){
+    console.log(boxes);
+    this.setState({boxes: boxes});
   }
 
   onInputChange = (event) => {
@@ -106,7 +109,7 @@ class App extends Component {
           this.setState(Object.assign(this.state.user, {entries:count}));
         })
       }
-      this.displayFaceBox(this.calculateFaceLocation(response))
+      this.displayFaceBoxes(this.calculateFaceLocations(response))
     })
     .catch(error => console.log('error', error));
   }
@@ -122,7 +125,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageURL, route, box } = this.state;
+    const { isSignedIn, imageURL, route, boxes } = this.state;
     return (
       <div className="App">
         <ParticlesBg type="cobweb" bg={true} color="#ffffff" />
@@ -132,7 +135,7 @@ class App extends Component {
               <Logo /> 
               <Rank userName={this.state.user.name} userEntries={this.state.user.entries} />
               <ImageLinkForm onInputChange={this.onInputChange} onSubmit={this.onSubmit}/>
-              <FaceRecognition box={box} imageURL={imageURL}/>
+              <FaceRecognition boxes={boxes} imageURL={imageURL}/>
           </div>
           : (route === 'signin')
           ? <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} ip={this.state.ip} />

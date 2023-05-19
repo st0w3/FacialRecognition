@@ -1,0 +1,12 @@
+version: '4.19'
+
+services:
+  smart-brain:
+    container_name: frontend
+    build: ./
+    ports: 
+      - "3000:3000"
+    command: npm start
+    working_dir: /usr/src/smart-brain
+    volumes:
+      - ./:/usr/src/smart-brain

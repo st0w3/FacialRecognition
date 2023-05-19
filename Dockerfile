@@ -1,15 +1,9 @@
-# syntax=docker/dockerfile:1
+FROM node:current-alpine3.16
 
-FROM node:latest AS build
-WORKDIR /build
+WORKDIR /usr/src/smart-brain
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+COPY ./ ./
+
 RUN npm install
 
-COPY public/ public
-COPY src/ src
-RUN npm run build
-EXPOSE 80
-FROM nginx:alpine
-COPY --from=build /build/build/ /usr/share/nginx/html
+CMD ["/bin/sh"]
